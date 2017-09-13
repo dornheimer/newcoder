@@ -24,8 +24,9 @@ def parse(raw_file, delimiter):
     with open(raw_file) as opened_file:
         csv_data = csv.reader(opened_file, delimiter=delimiter)
         fields = csv_data.__next__()
+        parsed_data = [dict(zip(fields, row)) for row in csv_data]
 
-    return [dict(zip(fields, row)) for row in csv_data]
+    return parsed_data
 
 
 def save_to_json(data, filename, indent=4):

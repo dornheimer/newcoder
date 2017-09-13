@@ -37,7 +37,7 @@ def visualize_days(parsed_data):
                   counter["Saturday"],
                   counter["Sunday"]
                 ]
-    day_tuple = tuple(["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"])
+    day_tuple = ("Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun")
 
     # Assign the data to a plot
     plt.plot(data_list)
@@ -73,10 +73,11 @@ def visualize_type(parsed_data):
     plt.bar(xlocations, counter.values(), width=width)
 
     # Assign labels and tick location to x-axis
-    plt.xticks(xlocations + width / 2, labels, rotation=90)
+    plt.xticks(xlocations, labels, rotation=90)
+    plt.tick_params(bottom='off', pad=0.1)
 
     # Give some more room so the labels aren't cut off in the graph
-    plt.subplots_adjust(bottom=0.4)
+    plt.subplots_adjust(bottom=0.45)
 
     # Make the overall graph/figure larger
     plt.rcParams['figure.figsize'] = 12, 8

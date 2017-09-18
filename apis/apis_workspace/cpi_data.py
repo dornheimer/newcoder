@@ -1,4 +1,9 @@
+import logging
 import requests
+
+
+CPI_DATA_URL = 'http://research.stlouisfed.org/fred2/data/CPIAUCSL.txt'
+
 
 class CPIData:
     """Abstraction of the CPI data provided by FRED.
@@ -21,13 +26,13 @@ class CPIData:
         internally.
         """
         fp = requests.get(url, stream=True,
-                            headers={'Accept Encoding': None}).raw
+                            headers={'Accept Encoding': None})
 
         if save_as_file is None:
             return self.load_from_file(fp)
 
         else:
-            with open(save_as_file, 'wb+') as out:
+            with open(save_as_file, 'wb') as out:
                 for chunk in fp.iter_content(chunk_size=128):
                     out.write(chunk)
             with open(save_as_file) as fp:
@@ -38,10 +43,12 @@ class CPIData:
         current_year = None
         cpis_year = []
 
+        # Skip until header line
         for line in fp:
-            while not line.startswith("DATE"):  # Skip until header line
-                pass
+          if line.startswith("DATE"):
+              break
 
+        for line in fp:
             # Remove trailing newline char and split line
             data = line.rstrip().split()
             year = int(data[0].split("-")[0]) # Only get year
@@ -60,9 +67,10 @@ class CPIData:
                 current_year = year
             cpis_year.append(cpi)
 
-            # calculation for last year (no new year after to initialize computation above)
-            if current_year is not None and current_year not in self.year_cpi:
-                self.year_cpi[current_year] = sum(cpis_year) / len(cpis_year)
+        # calculation for last year (no new year after to initialize computation above)
+        if current_year is not None and current_year not in self.year_cpi:
+            self.year_cpi[current_year] = sum(cpis_year) / len(cpis_year)
+
 
     def get_adjusted_price(self, price, year, current_year=None):
         """Return the adapted price from a given year compared to what current

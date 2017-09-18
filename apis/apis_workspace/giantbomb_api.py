@@ -1,4 +1,6 @@
+import logging
 import requests
+
 
 class GiantBombAPI:
     """
@@ -40,7 +42,8 @@ class GiantBombAPI:
             # GB has limit of 100 items per call
             params['offset'] = num_fetched_results
             result = requests.get(self.base_url + '/platforms/',
-                                    params=params).json()
+                                    params=params)
+            result = result.json()
 
             if num_total_results is None:
                 num_total_results = int(result['number_of_total_results'])
